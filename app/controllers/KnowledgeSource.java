@@ -20,7 +20,6 @@ public class KnowledgeSource extends Controller {
     public static void addKBFile(KBFileUpload upload) {
         upload.save();
 
-
         // Proper response is created if we succeed
         response.status = Http.StatusCode.CREATED;
 
@@ -39,8 +38,16 @@ public class KnowledgeSource extends Controller {
         }else {
             renderBinary(result.file.get(),result.name);
         }
-        
+    }
 
+    public static void delete(Long id) {
+        KBFileUpload result = KBFileUpload.findById(id);
+        if (result == null) {
+            notFound("Could not find file with id: " + id);
+        }else{
+            result.delete();
+            ok();
+        }
     }
 
 

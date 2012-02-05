@@ -13,8 +13,9 @@ GET     /public/                                staticDir:public
 
 
 # Knowledge Sources
-GET    /kb/id={id}
 POST   /kb                                      KnowledgeSource.addKBFile
+GET    /kb/id={id}                              KnowledgeSource.get
+DELETE /kb/id={id}                              KnowledgeSource.delete
 
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}

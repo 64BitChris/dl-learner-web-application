@@ -34,7 +34,6 @@ public class KnowledgeSourceTest extends FunctionalTest{
 
         String url = Router.reverse("KnowledgeSource.addKBFile").url;
 
-
         Map<String, String> params = new HashMap<String, String>();
         String testFileName = "testFileName.dat";
         params.put("upload.name", testFileName);
@@ -49,9 +48,8 @@ public class KnowledgeSourceTest extends FunctionalTest{
         Http.Response response = POST(url, params, fileMap);
 
         assertEquals((Integer)Http.StatusCode.CREATED, response.status);
-
-
         String location = response.getHeader("Location");
+
         response = GET(location);
         assertIsOk(response);
         
@@ -61,5 +59,16 @@ public class KnowledgeSourceTest extends FunctionalTest{
         
         //Now test file size
         assertEquals(file.length(),getContent(response).length());
+
+        response = DELETE(location);
+        assertIsOk(response);
+
+        // Try it again to get 404
+        response = DELETE(location);
+        assertIsNotFound(response);
+
+        response = GET(location);
+        assertIsNotFound(response);
+
     }
 }
