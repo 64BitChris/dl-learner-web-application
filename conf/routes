@@ -11,5 +11,10 @@ GET     /favicon.ico                            404
 # Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
+
+# Knowledge Sources
+GET    /kb/id={id}
+POST   /kb                                      KnowledgeSource.addKBFile
+
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}
