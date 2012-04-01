@@ -1,0 +1,13 @@
+@()
+
+
+@main("KB File Upload") {
+  @helper.form(action = controllers.routes.KnowledgeSource.upload, 'enctype -> "multipart/form-data"){
+
+    <input type="file" name="kbfile">
+
+      <p>
+        <input type="submit">
+      </p>
+  }
+}

@@ -1,9 +1,9 @@
 package models;
 
-import play.db.jpa.Blob;
-import play.db.jpa.Model;
+import play.db.ebean.Model;
 
 import javax.persistence.Entity;
+import java.sql.Blob;
 
 /**
  * Created by IntelliJ IDEA.
