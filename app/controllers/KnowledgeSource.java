@@ -1,10 +1,16 @@
 package controllers;
 
+import com.avaje.ebean.Ebean;
+import models.KnowledgeSourceFileUpload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import play.data.Form;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
-import java.io.File;
+import java.io.*;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,69 +20,60 @@ import java.io.File;
  */
 public class KnowledgeSource extends Controller {
 
-    public static Result upload(){
+    final static Logger logger = LoggerFactory.getLogger(KnowledgeSource.class);
 
+    public static Result storeFile() {
+
+        /** Extract the Uploaded File from the request */
         Http.MultipartFormData body = request().body().asMultipartFormData();
+        Http.MultipartFormData.FilePart ksFile = body.getFile("file");
+        File uploadedFile = ksFile.getFile();
 
-        Http.MultipartFormData.FilePart kbFile = body.getFile("kbfile");
+        /** Extract the non-file fields */
+        Form<KnowledgeSourceFileUpload> form = form(KnowledgeSourceFileUpload.class);
+        KnowledgeSourceFileUpload knowledgeSourceFileUpload = form.bindFromRequest().get();
 
-        if (kbFile != null) {
+        try {
+            FileInputStream fis = new FileInputStream(uploadedFile);
+            /** Convert bytes -  Limit of 4GB, seems reasonable */
+            byte[] bytes = new byte[(int) uploadedFile.length()];
+            fis.read(bytes);
 
-            String fileName = kbFile.getFilename();
-            String contentType = kbFile.getContentType();
-            File file = kbFile.getFile();
+            knowledgeSourceFileUpload.file = bytes;
+            if (knowledgeSourceFileUpload.file != null) {
+                knowledgeSourceFileUpload.save();
+                logger.info("Successfully Saved Uploaded File");
+                return redirect(routes.KnowledgeSource.index());
+            } else {
+                logger.error("Could not save uploaded file - it was null.");
+                flash("error", "Missing File");
+                return redirect(routes.Application.index());
+            }
 
-            return ok("File Uploaded");
-        }else{
-            flash("error", "Missing File");
-            return redirect(routes.Application.index());
+        } catch (FileNotFoundException e) {
+            return badRequest("Problem with the uploaded file");
+        } catch (IOException e) {
+            return badRequest("Problem reading raw bytes");
         }
+    }
+
+    public static Result retrieve(Long id) {
+        logger.info("In Retrieve for id:" + id);
+
+        KnowledgeSourceFileUpload ksFile = KnowledgeSourceFileUpload.find.byId(id);
+
+
+        return ok(ksFile.file);
 
     }
 
-    public static Result index(){
-
-        return ok(views.html.knowledgesource.index.render());
-//        return ok();
+    public static Result index() {
+        List<KnowledgeSourceFileUpload> knowledgeSources = Ebean.find(KnowledgeSourceFileUpload.class).findList();
+        return ok(views.html.KnowledgeSource.index.render(knowledgeSources));
     }
 
-//    public static void addKBFile(KBFileUpload upload) {
-//        upload.save();
-//
-//
-//
-//        // Give the location of the newly created object.
-//        Map<String, Object> params = new HashMap<String, Object>();
-//        params.put("id", upload.id);
-//        String location = Router.reverse("knowledgesource.get", params).url;
-//
-//        // Proper response is created if we succeed
-//        response().setHeader("Location", location);
-//        Result response = created();
-//        //response.setHeader("Location", location);
-//    }
-
-//    public static void get(Long id) {
-//        KBFileUpload result = KBFileUpload.findById(id);
-//        if (result == null) {
-//            notFound();
-//        }else {
-//            renderBinary(result.file.get(),result.name);
-//        }
-//    }
-//
-//    public static void delete(Long id) {
-//        KBFileUpload result = KBFileUpload.findById(id);
-//        if (result == null) {
-//            notFound("Could not find file with id: " + id);
-//        }else{
-//            result.delete();
-//            ok();
-//        }
-//    }
-
-
-
-
+    public static Result upload() {
+        return ok(views.html.KnowledgeSource.upload.render(form(KnowledgeSourceFileUpload.class)));
+    }
 }
 

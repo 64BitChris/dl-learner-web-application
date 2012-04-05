@@ -11,4 +11,6 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 #Knowledge Source Management
 GET   /ks                           controllers.KnowledgeSource.index()
-POST  /ks/upload                    controllers.KnowledgeSource.upload()
+GET   /ks/upload                    controllers.KnowledgeSource.upload()
+GET   /ks/:id                       controllers.KnowledgeSource.retrieve(id: Long)
+POST  /ks/upload                    controllers.KnowledgeSource.storeFile()

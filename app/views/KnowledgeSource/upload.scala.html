@@ -1,0 +1,23 @@
+@(uploadForm: Form[KnowledgeSourceFileUpload])
+
+@import helper._
+
+@main(title = "Knowledge Source File Upload") {
+
+Select a Knowledge Source File to upload.
+
+  @form(action = controllers.routes.KnowledgeSource.storeFile, args = 'id -> "uploadForm", 'enctype -> "multipart/form-data"){
+
+    @inputText(
+          field = uploadForm("name"),
+          args = '_label -> "Knowledge Source Name")
+
+    @inputFile(
+          field = uploadForm("file"),
+          args = '_label -> "Knowledge Source File")
+
+      <p>
+        <input type="submit">
+      </p>
+  }
+}

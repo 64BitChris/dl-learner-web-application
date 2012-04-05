@@ -1,13 +1,25 @@
-@()
+@(knowledgeSources: List[KnowledgeSourceFileUpload])
 
 
-@main("KB File Upload") {
-  @helper.form(action = controllers.routes.KnowledgeSource.upload, 'enctype -> "multipart/form-data"){
+@main("Knowledge Sources") {
 
-    <input type="file" name="kbfile">
+Welcome to the Knowledge Source Management.
 
-      <p>
-        <input type="submit">
-      </p>
-  }
+<div id="ksNav">
+    <a href="@controllers.routes.KnowledgeSource.upload()">Upload a Knowledge Source</a>
+</div>
+
+<div id="ksList">
+    <dl>
+        @for(s <- knowledgeSources) {
+        <dt>Name:</dt>
+        <dd>@s.name</dd>
+
+        <dt>Download:</dt>
+        <dd><a href="@controllers.routes.KnowledgeSource.retrieve(s.id)">Link</a></dd>
+        }
+    </dl>
+</div>
+
+
 }

@@ -1,0 +1,22 @@
+
+
+
+/* Knowledge Source Rules */
+
+#ksList dd {
+    display: inline-block;
+}
+
+#ksList dt{
+    display: inline-block;
+}
+
+
+/* File Upload Rules */
+#uploadForm dd {
+    display: inline-block;
+}
+
+#uploadForm dt {
+    display: inline-block;
+}
