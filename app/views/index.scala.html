@@ -1,7 +1,11 @@
-@(message: String)
+@()
 
-@main("Welcome to Play 2.0") {
+@main("DL Learner Web Application") {
     
-    @play20.welcome(message, style = "Java")
+    Welcome to the DL-Learner Web Application.
+
+  <div id="ksNav">
+    <a href="@controllers.routes.KnowledgeSource.index()">Manage Knowledge Sources</a>
+  </div>
     
 }

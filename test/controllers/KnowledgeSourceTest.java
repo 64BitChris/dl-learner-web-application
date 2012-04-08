@@ -16,6 +16,8 @@ import static play.test.Helpers.*;
  * Time: 7:46 PM
  *
  * Test the file upload controller.
+ *
+ * Currently this test is not complete as I need to figure out how to attach the test file to the FakeRequest object.
  */
 public class KnowledgeSourceTest{
 
