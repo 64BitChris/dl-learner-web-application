@@ -17,7 +17,7 @@ import java.util.List;
  * User: Chris Shellenbarger
  * Date: 2/5/12
  * Time: 12:43 PM
- *
+ * <p/>
  * An HTML Based Controller responsible for the managing of Knowledge Sources stored by the server.  We have to manage the Knowlege
  * Sources through a web interface because we can't make the assumption that the user knows anything about the server-side
  * filesystem and its contents (and we wouldn't want to provide direct access to this anyway).
@@ -35,9 +35,16 @@ public class KnowledgeSource extends Controller {
 
         /** Extract the Uploaded File from the request */
         Http.MultipartFormData body = request().body().asMultipartFormData();
-        Http.MultipartFormData.FilePart ksFile = body.getFile("file");
-        File uploadedFile = ksFile.getFile();
+        if (body == null) {
+            return badRequest("No Body Present on Request");
+        }
 
+        Http.MultipartFormData.FilePart ksFile = body.getFile("file");
+        if (ksFile == null) {
+            return badRequest("No 'file' element present in the body");
+        }
+
+        File uploadedFile = ksFile.getFile();
         /** Extract the non-file fields */
         Form<KnowledgeSourceFileUpload> form = form(KnowledgeSourceFileUpload.class);
         KnowledgeSourceFileUpload knowledgeSourceFileUpload = form.bindFromRequest().get();
@@ -60,9 +67,9 @@ public class KnowledgeSource extends Controller {
             }
 
         } catch (FileNotFoundException e) {
-            return badRequest("Problem with the uploaded file");
+            return internalServerError("Problem with the uploaded file");
         } catch (IOException e) {
-            return badRequest("Problem reading raw bytes");
+            return internalServerError("Problem reading raw bytes");
         }
     }
 
@@ -76,9 +83,9 @@ public class KnowledgeSource extends Controller {
         KnowledgeSourceFileUpload ksFile = KnowledgeSourceFileUpload.find.byId(id);
 
         Result result = null;
-        if(ksFile != null){
+        if (ksFile != null) {
             result = ok(ksFile.file);
-        }else{
+        } else {
             result = notFound("No Knowledge Source found with id: " + id);
         }
 
