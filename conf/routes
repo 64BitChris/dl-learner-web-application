@@ -14,3 +14,19 @@ GET   /ks                           controllers.KnowledgeSource.index()
 GET   /ks/upload                    controllers.KnowledgeSource.upload()
 GET   /ks/:id                       controllers.KnowledgeSource.retrieve(id: Long)
 POST  /ks/upload                    controllers.KnowledgeSource.storeFile()
+
+
+#Learning Algorithms
+GET   /la                           controllers.LearningAlgorithms.index()
+GET   /la/add                       controllers.LearningAlgorithms.addLearningAlgorithm()
+POST  /la/create                    controllers.LearningAlgorithms.create()
+
+
+#Learning Problems
+GET  /learningproblems              controllers.LearningProblems.index()
+
+#Reasoners
+GET   /reasoners                    controllers.Reasoners.index()
+GET   /reasoners/add                controllers.Reasoners.add()
+GET   /reasoners/add/:reasonerType  controllers.Reasoners.addReasoner(reasonerType: String)
+POST  /reasoners/save               controllers.Reasoners.save()

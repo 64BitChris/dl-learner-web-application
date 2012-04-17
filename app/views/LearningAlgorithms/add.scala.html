@@ -1,0 +1,21 @@
+@(laForm: Form[org.dllearner.algorithms.celoe.CELOE],b:  Collection[org.dllearner.core.config.ConfigOption])
+
+@import helper._
+
+@main("Add Learning Algorithm"){
+
+This page is used to create a learning algorithm.
+
+
+  @form(action = routes.LearningAlgorithms.create()){
+
+    Size: @b.size()
+    @for(option <- b){
+      @helper.input(laForm(option.name())) { (id, name, value, args) =>
+        <input type="text" name="@name" id="@id" value="@option.defaultValue" @toHtmlArgs(args)>
+       }
+
+       @option.description()
+    }
+  }
+}
