@@ -30,7 +30,6 @@ object ApplicationBuild extends Build {
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
     /**The three slashes for the local maven repository are required on windows - may not be the same on linux  */
     resolvers ++= Seq(
-      "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository",
       "University Leipzig, AKSW Maven2 Repository Releases" at "http://maven.aksw.org/archiva/repository/internal",
       "University Leipzig, AKSW Maven2 Repository Snapshots" at "http://maven.aksw.org/archiva/repository/snapshots"
       )
