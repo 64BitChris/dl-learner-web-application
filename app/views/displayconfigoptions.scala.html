@@ -1,0 +1,18 @@
+@(configOptions: Collection[org.dllearner.core.config.ConfigOption], descriptorType: String, postMethod: () => Call)
+
+
+This page is used to create a @descriptorType component.
+
+<form action="@postMethod()" method="POST">
+
+    @for(option <- configOptions){
+    <dl>
+        <dt><label for="@option.name()">@option.name</label></dt>
+        <dd>
+            <input type="text" name="@option.name()" id="@option.name()" value="@option.defaultValue"/>
+        </dd>
+    </dl>
+    }
+
+    <input type="submit" value="Create"/>
+</form>

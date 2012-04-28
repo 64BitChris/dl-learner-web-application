@@ -1,17 +1,7 @@
-@(descriptors: List[ComponentDescriptor])
-
-@import helper._
+@(descriptors: Collection[ComponentDescriptor])
 
 @main("Add Reasoner","RS"){
 
-Please select the reasoner type to create:
-
-<dl>
-@for(d <- descriptors){
- <dt><a href="@controllers.routes.Reasoners.addReasoner(d.getShortName())">@d.getName()</a></dt>
-    <dd>@d.getDescription()</dd>
-}
-</dl>
-
+@displaycomponents(descriptors,"reasoner",controllers.routes.Reasoners.addReasoner)
 
 }

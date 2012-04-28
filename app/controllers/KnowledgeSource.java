@@ -1,7 +1,16 @@
 package controllers;
 
 import com.avaje.ebean.Ebean;
+import models.ComponentDescriptor;
 import models.KnowledgeSourceFileUpload;
+import org.dllearner.core.AnnComponentManager;
+import org.dllearner.core.Component;
+import org.dllearner.core.config.ConfigOption;
+import org.dllearner.exception.NoComponentDefinedException;
+import org.dllearner.utils.ComponentDescriptorUtils;
+import org.dllearner.utils.ConfigOptionUtils;
+import org.dllearner.utils.SimpleComponentDescriptorUtils;
+import org.dllearner.utils.SimpleConfigOptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.data.Form;
@@ -10,7 +19,9 @@ import play.mvc.Http;
 import play.mvc.Result;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,7 +35,57 @@ import java.util.List;
  */
 public class KnowledgeSource extends Controller {
 
-    final static Logger logger = LoggerFactory.getLogger(KnowledgeSource.class);
+    private final static Logger logger = LoggerFactory.getLogger(KnowledgeSource.class);
+    private static Collection<Class<? extends Component>> knowledgeSources =
+            AnnComponentManager.getInstance().getComponentsOfType(org.dllearner.core.KnowledgeSource.class);
+
+    private final static ComponentDescriptorUtils descriptorUtils = new SimpleComponentDescriptorUtils();
+    private final static ConfigOptionUtils configOptionUtils = new SimpleConfigOptionUtils();
+
+    /**
+     * HTML Page for selecting a Knowledge Source to add.
+     *
+     * @return An HTML Page for selecting a Knowledge Source to add.
+     */
+    public static Result add() {
+        Collection<ComponentDescriptor> descriptors = descriptorUtils.convert(knowledgeSources);
+        return ok(views.html.KnowledgeSource.add.render(descriptors));
+    }
+
+    /**
+     * Present the HTML page for adding a specific instance of a KnowledgeSource.
+     *
+     * @param ksType The string type of the knowledge source to add - this corresponds with the short name of the component.
+     * @return The HTML page for adding a specific instance of a ReasonerComponent.
+     */
+    public static Result addKnowledgeSource(String ksType) {
+        try {
+            Collection<ConfigOption> configOptions = configOptionUtils.configOptionsFor(ksType, knowledgeSources);
+            return ok(views.html.KnowledgeSource.addKnowledgeSource.render(configOptions));
+        } catch (NoComponentDefinedException e) {
+            return notFound(e.getMessage());
+        }
+    }
+
+    /**
+     * Save the config options.
+     *
+     * @return The config options.
+     */
+    public static Result save(){
+
+        logger.info(request().body().asText());
+        Map<String, String[]> stringMap = request().body().asFormUrlEncoded();
+
+        for (String s : stringMap.keySet()) {
+            logger.info("Key: " + s);
+            logger.info("Values:");
+            for (String value : stringMap.get(s)) {
+                logger.info("\t" + value);
+            }
+        }
+        return ok("Save complete");
+    }
 
     /**
      * This is the method which gets called via POST to store a KS File on the server.

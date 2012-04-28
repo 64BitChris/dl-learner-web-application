@@ -11,10 +11,12 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 #Knowledge Source Management
 GET   /ks                           controllers.KnowledgeSource.index()
+GET   /ks/add                       controllers.KnowledgeSource.add()
+GET   /ks/add/:ksType               controllers.KnowledgeSource.addKnowledgeSource(ksType: String)
 GET   /ks/upload                    controllers.KnowledgeSource.upload()
 GET   /ks/:id                       controllers.KnowledgeSource.retrieve(id: Long)
 POST  /ks/upload                    controllers.KnowledgeSource.storeFile()
-
+POST  /ks/save                      controllers.KnowledgeSource.save()
 
 #Learning Algorithms
 GET   /la                           controllers.LearningAlgorithms.index()

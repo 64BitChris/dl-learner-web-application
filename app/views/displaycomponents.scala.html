@@ -1,0 +1,10 @@
+@(descriptors: Collection[ComponentDescriptor], descriptorType: String, link: (String) => Call )
+
+Please select the @descriptorType type to create:
+
+<dl>
+    @for(d <- descriptors){
+    <dt><a href="@link(d.getShortName())">@d.getName()</a></dt>
+    <dd>@d.getDescription()</dd>
+    }
+</dl>

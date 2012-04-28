@@ -1,12 +1,15 @@
 package controllers;
 
 import models.ComponentDescriptor;
-import models.SimpleComponentDescriptor;
 import org.dllearner.core.AnnComponentManager;
 import org.dllearner.core.Component;
 import org.dllearner.core.ReasonerComponent;
-import org.dllearner.core.config.ConfigHelper;
 import org.dllearner.core.config.ConfigOption;
+import org.dllearner.exception.NoComponentDefinedException;
+import org.dllearner.utils.ComponentDescriptorUtils;
+import org.dllearner.utils.ConfigOptionUtils;
+import org.dllearner.utils.SimpleComponentDescriptorUtils;
+import org.dllearner.utils.SimpleConfigOptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.mvc.Controller;
@@ -28,8 +31,9 @@ public class Reasoners extends Controller {
             AnnComponentManager.getInstance().getComponentsOfType(ReasonerComponent.class);
 
 
-    final static Logger logger = LoggerFactory.getLogger(Reasoners.class);
-
+    private final static Logger logger = LoggerFactory.getLogger(Reasoners.class);
+    private final static ComponentDescriptorUtils descriptorUtils = new SimpleComponentDescriptorUtils();
+    private final static ConfigOptionUtils configOptionUtils = new SimpleConfigOptionUtils();
 
     /**
      * Present the page for managing Reasoners.
@@ -48,20 +52,8 @@ public class Reasoners extends Controller {
      * @return The HTML page containing the menu for adding a Reasoner to the configuration.
      */
     public static Result add() {
-
-        List<ComponentDescriptor> reasoners = new ArrayList<ComponentDescriptor>();
-
-        for (Class<? extends Component> component : Reasoners.reasoners) {
-
-            SimpleComponentDescriptor descriptor = new SimpleComponentDescriptor();
-            descriptor.setName(AnnComponentManager.getName(component));
-            descriptor.setShortName(AnnComponentManager.getShortName(component));
-            descriptor.setDescription(AnnComponentManager.getDescription(component));
-            reasoners.add(descriptor);
-
-        }
-
-        return ok(views.html.Reasoners.add.render(reasoners));
+        Collection<ComponentDescriptor> descriptors = descriptorUtils.convert(reasoners);
+        return ok(views.html.Reasoners.add.render(descriptors));
     }
 
     /**
@@ -72,33 +64,16 @@ public class Reasoners extends Controller {
      */
     public static Result addReasoner(String reasonerType) {
 
-//        AnnComponentManager.getInstance().getComponentsOfType(Re)
-
-        Class<? extends Component> component = null;
-        Iterator<Class<? extends Component>> itr = reasoners.iterator();
-        while (component == null && itr.hasNext()) {
-            Class<? extends Component> reasoner = itr.next();
-            String shortName = AnnComponentManager.getShortName(reasoner);
-            if (shortName.equals(reasonerType)) {
-              component = reasoner;
-            }
+        try {
+            Collection<ConfigOption> configOptions = configOptionUtils.configOptionsFor(reasonerType, reasoners);
+            return ok(views.html.Reasoners.addReasoner.render(configOptions));
+        } catch (NoComponentDefinedException e) {
+            return notFound(e.getMessage());
         }
-
-        /** If a bad request comes in */
-        if(component == null){
-            return notFound("No Reasoner with the short name " + reasonerType + " could be found.");
-        }
-
-        Map<ConfigOption, Class<?>> configOptionTypes = ConfigHelper.getConfigOptionTypes(component);
-
-        logger.info("Size: " + configOptionTypes.size());
-
-        return ok(views.html.Reasoners.addReasoner.render(configOptionTypes.keySet()));
     }
 
 
     public static Result save() {
-
 
         logger.info(request().body().asText());
         Map<String, String[]> stringMap = request().body().asFormUrlEncoded();

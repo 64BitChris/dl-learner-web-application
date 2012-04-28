@@ -3,23 +3,25 @@
 
 @main("Knowledge Sources","KS") {
 
-Welcome to the Knowledge Source Management.
+<h1>Knowledge Sources</h1>
 
-<div id="ksNav">
-    <a href="@controllers.routes.KnowledgeSource.upload()">Upload a Knowledge Source</a>
-</div>
+@if(knowledgeSources.isEmpty()){
 
-<div id="ksList">
+There are no Knowledge Sources Configured, do you wish to <a href="@routes.KnowledgeSource.add()">add</a> one?
+
+} else {
+  <div id="ksList">
     <dl>
         @for(s <- knowledgeSources) {
         <dt>Name:</dt>
         <dd>@s.name</dd>
 
         <dt>Download:</dt>
-        <dd><a href="@controllers.routes.KnowledgeSource.retrieve(s.id)">Link</a></dd>
+        <dd><a href="@routes.KnowledgeSource.retrieve(s.id)">Link</a></dd>
         }
     </dl>
-</div>
+  </div>
+}
 
 
 }

@@ -1,24 +1,8 @@
 @(b: Collection[org.dllearner.core.config.ConfigOption])
 
-@import helper._
-
 @main("Add Reasoner","RS"){
 
 
-This page is used to create a reasoner component.
-
-  <form action="@routes.Reasoners.save()" method="POST">
-
-      @for(option <- b){
-        <dl>
-          <dt><label for="@option.name()">@option.name</label></dt>
-          <dd>
-              <input type="text" name="@option.name()" id="@option.name()" value="@option.defaultValue"/>
-          </dd>
-        </dl>
-      }
-
-      <input type="submit" value="Create"/>
-  </form>
+  @displayconfigoptions(b,"reasoner",routes.Reasoners.save)
 
 }
